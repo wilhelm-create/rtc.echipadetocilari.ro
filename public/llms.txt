@@ -1,0 +1,24 @@
+# Clubul de Tenis RTC
+
+> Club de tenis în București (Bd. Basarabia 73-79) cu programe pentru copii, juniori și adulți, lecții private, cardio tenis și rezervare terenuri.
+
+## Pagini importante
+
+- [Acasă](https://rtc.echipadetocilari.ro/): Prezentare club, programe, testimoniale
+- [Programe](https://rtc.echipadetocilari.ro/programe): Academia copii/junior, competitiv, lecții private, adulți, cardio tenis
+- [Rezervă teren](https://rtc.echipadetocilari.ro/rezerva-teren): Facilități și rezervare Booksport
+- [Despre noi](https://rtc.echipadetocilari.ro/despre-noi): Echipa de antrenori
+- [Tabere](https://rtc.echipadetocilari.ro/tabere): Tabăra Furnicuțelor, Tabăra Artiștilor Sportivi
+- [Contact](https://rtc.echipadetocilari.ro/contact): Email, telefon, formular
+
+## Contact
+
+- Email: contact@tenisclubrtc.com
+- Telefon: +40 774 680 337
+- Adresă: Bulevardul Basarabia 73 - 79, București
+- Program: 07:00 – 21:00
+- Rezervare teren: https://www.booksport.ro/rtc
+
+## Agenție
+
+Site dezvoltat de Echipa de Tocilari — https://www.echipadetocilari.ro
