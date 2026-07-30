@@ -1,5 +1,10 @@
 /**
- * Flatten WP mirror + fix links so the static site is pixel-identical offline.
+ * Flatten WP mirror + fix scraper versioned asset names so the static site
+ * loads CSS/JS/fonts identically to WordPress.
+ *
+ * website-scraper saves `file.css?ver=1.2.3` as `file_ver=1.2.3.css`, but HTML
+ * still references `file.css?ver=1.2.3` → 404 → unstyled site.
+ *
  * Output: ./out (Vercel static output directory)
  */
 import {
@@ -12,8 +17,10 @@ import {
   statSync,
   cpSync,
   copyFileSync,
+  renameSync,
+  unlinkSync,
 } from "fs";
-import { join, dirname, extname, relative } from "path";
+import { join, dirname, extname, basename, relative } from "path";
 import { fileURLToPath } from "url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -41,77 +48,173 @@ function walk(dir, files = []) {
   return files;
 }
 
-const textExt = new Set([".html", ".htm", ".css", ".js", ".svg", ".xml", ".json", ".txt"]);
+// Match website-scraper version suffix: name_ver=1.2.3.css or name.min_ver=3.31.2.js
+const VER_FILE_RE = /^(.*)_ver=(.+?)(\.[^.]+)$/i;
 
-function fixHtml(content, filePath) {
+/**
+ * Rename file_ver=X.ext → file.ext (overwrite if clean name already exists)
+ */
+function unversionFilenames() {
+  let renamed = 0;
+  // deepest paths first so we don't trip over renames mid-walk
+  const files = walk(OUT).sort((a, b) => b.length - a.length);
+
+  for (const file of files) {
+    const name = basename(file);
+    const m = name.match(VER_FILE_RE);
+    if (!m) continue;
+
+    const cleanName = m[1] + m[3]; // base + extension
+    const dest = join(dirname(file), cleanName);
+
+    if (existsSync(dest) && dest !== file) {
+      // Prefer the versioned scrape (complete), drop empty/partial clean name
+      unlinkSync(dest);
+    }
+    renameSync(file, dest);
+    renamed++;
+  }
+  return renamed;
+}
+
+const textExt = new Set([
+  ".html",
+  ".htm",
+  ".css",
+  ".js",
+  ".svg",
+  ".xml",
+  ".json",
+  ".txt",
+]);
+
+/**
+ * Convert any scraped versioned path or WP querystring path to clean path.
+ *  - foo.css?ver=1.2.3 → foo.css
+ *  - foo_ver=1.2.3.css → foo.css
+ *  - foo.min.js?ver=3 → foo.min.js
+ */
+function cleanAssetPath(path) {
+  if (!path || path.startsWith("data:") || path.startsWith("blob:")) return path;
+
+  let p = path;
+
+  // Strip query string & hash for local assets
+  const q = p.indexOf("?");
+  const h = p.indexOf("#");
+  let query = "";
+  let hash = "";
+  if (q !== -1) {
+    query = p.slice(q);
+    p = p.slice(0, q);
+  }
+  if (h !== -1 && (q === -1 || h < q)) {
+    // already handled if after ?
+  }
+  // Re-extract hash from original if present after path
+  const hashInOrig = path.indexOf("#");
+  if (hashInOrig !== -1) {
+    hash = path.slice(hashInOrig);
+    // if hash was after ?, strip from query
+    if (query.includes("#")) {
+      const hi = query.indexOf("#");
+      hash = query.slice(hi);
+      query = query.slice(0, hi);
+    }
+  }
+
+  // Decode scraper encoding
+  p = p.replaceAll("%3D", "=").replaceAll("%3d", "=");
+
+  // file_ver=1.2.3.css → file.css
+  p = p.replace(/_ver=[^/?#]+(?=\.[a-z0-9]+$)/gi, "");
+
+  // Keep only non-ver query params if any (rare). Drop ver/v/version.
+  if (query) {
+    const params = new URLSearchParams(query.slice(1));
+    params.delete("ver");
+    params.delete("v");
+    params.delete("version");
+    const rest = params.toString();
+    query = rest ? `?${rest}` : "";
+  }
+
+  return p + query + hash;
+}
+
+function fixHtml(content) {
   let c = content;
 
-  // website-scraper encodes `=` as %3D in links but saves files with literal `=`
   c = c.replaceAll("%3D", "=");
   c = c.replaceAll("%3d", "=");
 
   // Broken scraper artifacts: asset treated as page → .../file.jpg/index.html
-  c = c.replace(/(\.(?:jpg|jpeg|png|webp|gif|svg|css|js|woff2?|ttf|eot))\/index\.html/gi, "$1");
+  c = c.replace(
+    /(\.(?:jpg|jpeg|png|webp|gif|svg|css|js|woff2?|ttf|eot|ico))\/index\.html/gi,
+    "$1",
+  );
 
-  // Absolute leftovers
+  // Absolute leftovers (plain + JSON-escaped https:\/\/…)
   c = c.replaceAll("https://www.rtc.echipadetocilari.ro", "");
   c = c.replaceAll("http://www.rtc.echipadetocilari.ro", "");
   c = c.replaceAll("https://rtc.echipadetocilari.ro", "");
+  c = c.replaceAll("http://rtc.echipadetocilari.ro", "");
   c = c.replaceAll("//www.rtc.echipadetocilari.ro", "");
+  c = c.replaceAll("https:\\/\\/www.rtc.echipadetocilari.ro", "");
+  c = c.replaceAll("http:\\/\\/www.rtc.echipadetocilari.ro", "");
+  c = c.replaceAll("https:\\/\\/rtc.echipadetocilari.ro", "");
+  c = c.replaceAll("http:\\/\\/rtc.echipadetocilari.ro", "");
 
-  // Make root-relative asset paths so /programe/ and / work the same
-  // Convert href/src starting with wp- or relative ../wp- to /wp-
+  // href / src / action / data-src / content (meta images)
   c = c.replace(
-    /(href|src|content)=(["'])(?:\.\/)?(?:\.\.\/)*(wp-(?:content|includes)\/[^"']+)\2/gi,
-    "$1=$2/$3$2",
-  );
-  c = c.replace(
-    /(href|src)=(["'])(?:\.\/)?(?:\.\.\/)*(wp-content\/[^"']+)\2/gi,
-    "$1=$2/$3$2",
+    /\b(href|src|action|data-src|data-lazy-src|content)=(["'])([^"']+)\2/gi,
+    (full, attr, q, val) => {
+      // skip pure anchors, mailto, tel, external http(s) that aren't our domain
+      if (
+        val.startsWith("#") ||
+        val.startsWith("mailto:") ||
+        val.startsWith("tel:") ||
+        val.startsWith("javascript:") ||
+        val.startsWith("data:")
+      ) {
+        return full;
+      }
+      let next = cleanAssetPath(val);
+      // root-relative wp assets
+      next = next.replace(/^(?:\.\.\/)+/, "");
+      next = next.replace(/^\.\//, "");
+      if (/^wp-(?:content|includes)\//i.test(next)) next = "/" + next;
+      return `${attr}=${q}${next}${q}`;
+    },
   );
 
-  // srcset entries: "path 800w, path 300w"
+  // srcset
   c = c.replace(/srcset=(["'])([^"']+)\1/gi, (_, q, srcset) => {
     const fixed = srcset
       .split(",")
       .map((part) => {
-        let p = part.trim();
-        // skip empty / broken
-        if (!p || p.includes("/index.html")) {
-          // try strip /index.html
-          p = p.replace(/\/index\.html(\s|$)/, "$1");
-        }
-        p = p.replaceAll("%3D", "=").replaceAll("%3d", "=");
-        // make root relative
-        p = p.replace(/^(?:\.\.\/)+/, "");
-        p = p.replace(/^\.\//, "");
-        if (/^(wp-(?:content|includes)\/)/i.test(p)) {
-          p = "/" + p;
-        } else if (/^[^/\s][^:]*\.(?:jpg|jpeg|png|webp|gif|svg|css|js)/i.test(p)) {
-          // relative asset without leading slash
-          if (!p.startsWith("/") && !p.startsWith("http")) {
-            // leave size descriptor; path may already be root
-          }
-        }
-        // path with optional descriptor
-        const m = p.match(/^(\S+)(\s+\d+[wx])?$/i);
-        if (m) {
-          let path = m[1].replaceAll("%3D", "=");
-          path = path.replace(/^(?:\.\.\/)+/, "");
-          if (/^wp-(content|includes)\//i.test(path)) path = "/" + path;
-          return path + (m[2] || "");
-        }
-        return p;
+        const trimmed = part.trim();
+        if (!trimmed) return "";
+        const m = trimmed.match(/^(\S+)(\s+\d+[wx])?$/i);
+        if (!m) return trimmed;
+        let path = cleanAssetPath(m[1]);
+        path = path.replace(/^(?:\.\.\/)+/, "");
+        if (/^wp-(content|includes)\//i.test(path)) path = "/" + path;
+        return path + (m[2] || "");
       })
-      .filter((p) => p && !p.includes("undefined"))
+      .filter(Boolean)
       .join(", ");
     return `srcset=${q}${fixed}${q}`;
   });
 
-  // Fix css url() that got %3D
-  // (handled in CSS pass)
+  // Inline style url(...)
+  c = c.replace(/url\((['"]?)([^'")]+)\1\)/gi, (full, q, u) => {
+    if (u.startsWith("data:")) return full;
+    const cleaned = cleanAssetPath(u.trim());
+    return `url(${q}${cleaned}${q})`;
+  });
 
-  // Canonical / OG: point to production domain for SEO when live
+  // Canonical / OG: production domain
   const prod = "https://rtc.echipadetocilari.ro";
   c = c.replace(
     /<link rel="canonical" href="\/"/g,
@@ -122,67 +225,235 @@ function fixHtml(content, filePath) {
     `<link rel="canonical" href="${prod}$1"`,
   );
 
-  // Remove WordPress admin bar leftovers if any
-  c = c.replace(/<script[^>]*>[\s\S]*?wp\.apiFetch[\s\S]*?<\/script>/gi, "");
+  // recaptcha won't work offline
+  c = c.replace(/https?:\/\/www\.google\.com\/recaptcha[^"'\s]*/g, "#");
 
-  // Ensure base for edge cases — root relative only, no <base> needed
+  // Empty logo home link → /
+  c = c.replace(/<a href="">/g, '<a href="/">');
 
-  // Fix navigation: ensure trailing slashes match our static folders
-  // Already /programe/ etc.
+  // Hero / section background video: Elementor ships an empty <video> and sets
+  // src via JS from data-settings.background_video_link. Inject src so the
+  // video plays even if a handler chunk is late or missing.
+  c = injectBackgroundVideoSrc(c);
 
-  // Contact form: Elementor forms need admin-ajax — convert to mailto fallback note
-  // Keep as-is; form may no-op without WP backend. User asked identical look.
-
-  // Remove references to missing remote that break console
-  c = c.replace(
-    /https?:\/\/www\.google\.com\/recaptcha[^"'\s]*/g,
-    "#",
-  );
+  // Lightweight fallback for Elementor scroll animations + lazyload + video
+  if (c.includes("</body>") && !c.includes("rtc-static-enhance")) {
+    c = c.replace("</body>", `${ENHANCE_SCRIPT}\n</body>`);
+  }
 
   return c;
 }
+
+/**
+ * Find sections with background_video_link and fill empty hosted video tags.
+ */
+function injectBackgroundVideoSrc(html) {
+  // Match section (or container) that has video settings, then its empty video tag
+  return html.replace(
+    /(<[^>]+data-settings="[^"]*background_video_link[^"]*"[^>]*>)([\s\S]*?)(<video\b[^>]*class="[^"]*elementor-background-video-hosted[^"]*"[^>]*)(><\/video>)/gi,
+    (full, open, mid, videoOpen, videoClose) => {
+      // Already has src=
+      if (/\ssrc\s*=/i.test(videoOpen)) return full;
+
+      const settingsRaw = (open.match(/data-settings="([^"]*)"/i) || [])[1];
+      if (!settingsRaw) return full;
+      let link = "";
+      try {
+        const decoded = settingsRaw
+          .replace(/&quot;/g, '"')
+          .replace(/&amp;/g, "&")
+          .replace(/&#039;/g, "'")
+          .replace(/&lt;/g, "<")
+          .replace(/&gt;/g, ">");
+        const settings = JSON.parse(decoded);
+        link = settings.background_video_link || settings.background_video_fallback || "";
+      } catch {
+        const m = settingsRaw.match(/background_video_link&quot;:&quot;([^&]+)/);
+        if (m) link = m[1].replace(/\\u002F/g, "/").replace(/\\\//g, "/");
+      }
+      if (!link) return full;
+      // JSON may still have \/
+      link = link.replace(/\\\//g, "/");
+      if (link.startsWith("http")) {
+        try {
+          const u = new URL(link);
+          link = u.pathname;
+        } catch {
+          /* keep */
+        }
+      }
+      if (!link.startsWith("/") && !link.startsWith("http")) link = "/" + link;
+
+      const withSrc = `${videoOpen} src="${link}"${videoClose}`;
+      return open + mid + withSrc;
+    },
+  );
+}
+
+const ENHANCE_SCRIPT = `<script id="rtc-static-enhance">
+(function () {
+  function decodeSettings(el) {
+    var raw = el.getAttribute("data-settings");
+    if (!raw) return null;
+    try {
+      return JSON.parse(raw.replace(/&quot;/g, '"').replace(/&amp;/g, "&"));
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function ensureBackgroundVideos() {
+    document.querySelectorAll(".elementor-background-video-hosted").forEach(function (video) {
+      if (!video.getAttribute("src")) {
+        var host = video.closest("[data-settings*='background_video']") || video.closest("section, .e-con");
+        var s = host && decodeSettings(host);
+        var link = s && (s.background_video_link || s.background_video_fallback);
+        if (link) {
+          link = String(link).replace(/\\\\\\//g, "/");
+          if (link.indexOf("http") === 0) {
+            try { link = new URL(link).pathname; } catch (e) {}
+          }
+          video.setAttribute("src", link);
+        }
+      }
+      video.muted = true;
+      video.setAttribute("playsinline", "");
+      video.setAttribute("autoplay", "");
+      video.setAttribute("loop", "");
+      var p = video.play();
+      if (p && p.catch) p.catch(function () {});
+    });
+  }
+
+  function revealAnimations() {
+    var nodes = document.querySelectorAll(".elementor-invisible");
+    if (!nodes.length) return;
+    if (!("IntersectionObserver" in window)) {
+      nodes.forEach(function (el) {
+        el.classList.remove("elementor-invisible");
+        el.classList.add("animated");
+      });
+      return;
+    }
+    var io = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          var el = entry.target;
+          var s = decodeSettings(el) || {};
+          var name = s._animation || s.animation || "fadeIn";
+          var delay = parseInt(s._animation_delay || s.animation_delay || 0, 10) || 0;
+          setTimeout(function () {
+            el.classList.remove("elementor-invisible");
+            el.classList.add("animated", name);
+          }, delay);
+          io.unobserve(el);
+        });
+      },
+      { threshold: 0.12, rootMargin: "0px 0px -5% 0px" }
+    );
+    nodes.forEach(function (el) { io.observe(el); });
+  }
+
+  function markLazyContainers() {
+    document.querySelectorAll(".e-con.e-parent:not(.e-lazyloaded)").forEach(function (el) {
+      el.classList.add("e-lazyloaded");
+    });
+  }
+
+  function run() {
+    ensureBackgroundVideos();
+    markLazyContainers();
+    // Let Elementor init first; if elements stay invisible, our IO still fires
+    setTimeout(revealAnimations, 400);
+    setTimeout(ensureBackgroundVideos, 800);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", run);
+  } else {
+    run();
+  }
+})();
+</script>`;
 
 function fixCss(content) {
   let c = content;
   c = c.replaceAll("%3D", "=");
   c = c.replaceAll("%3d", "=");
-  // absolute domain in css
   c = c.replaceAll("https://www.rtc.echipadetocilari.ro", "");
   c = c.replaceAll("http://www.rtc.echipadetocilari.ro", "");
+  c = c.replaceAll("https://rtc.echipadetocilari.ro", "");
+
+  // url(path?ver=…) or url(path_ver=…)
+  c = c.replace(/url\((['"]?)([^'")]+)\1\)/gi, (full, q, u) => {
+    if (u.startsWith("data:")) return full;
+    const cleaned = cleanAssetPath(u.trim());
+    return `url(${q}${cleaned}${q})`;
+  });
+
+  // bare versioned filenames that may appear outside url()
+  c = c.replace(/([a-z0-9._-]+)_ver=[^)\s'",]+\.(css|js|woff2?|ttf|eot|svg)/gi, "$1.$2");
+
   return c;
 }
 
+function fixJs(content) {
+  let c = content;
+  c = c.replaceAll("%3D", "=");
+  c = c.replaceAll("https://www.rtc.echipadetocilari.ro", "");
+  c = c.replaceAll("https://rtc.echipadetocilari.ro", "");
+  c = c.replaceAll("https:\\/\\/www.rtc.echipadetocilari.ro", "");
+  c = c.replaceAll("https:\\/\\/rtc.echipadetocilari.ro", "");
+  // common WP script path with ?ver=
+  c = c.replace(
+    /(\/(?:wp-content|wp-includes)\/[^"'?\s]+)\?ver=[^"'&\s]+/gi,
+    "$1",
+  );
+  c = c.replace(/([a-z0-9._/-]+)_ver=[^"'?\s]+\.(js|css)/gi, "$1.$2");
+  return c;
+}
+
+// 1) Unversion filenames on disk
+const nRenamed = unversionFilenames();
+console.log(`Renamed ${nRenamed} versioned asset files`);
+
+// 2) Rewrite text content
 let nHtml = 0;
 let nCss = 0;
+let nJs = 0;
 for (const file of walk(OUT)) {
   const ext = extname(file).toLowerCase();
   if (!textExt.has(ext)) continue;
   const raw = readFileSync(file, "utf8");
   let next = raw;
   if (ext === ".html" || ext === ".htm") {
-    next = fixHtml(raw, file);
+    next = fixHtml(raw);
     nHtml++;
   } else if (ext === ".css") {
     next = fixCss(raw);
     nCss++;
+  } else if (ext === ".js") {
+    next = fixJs(raw);
+    nJs++;
   } else {
-    next = raw.replaceAll("%3D", "=").replaceAll("https://www.rtc.echipadetocilari.ro", "");
+    next = raw
+      .replaceAll("%3D", "=")
+      .replaceAll("https://www.rtc.echipadetocilari.ro", "");
   }
   if (next !== raw) writeFileSync(file, next, "utf8");
 }
 
-// Copy root helpers
+// 3) Root helpers
 const llms = join(ROOT, "public", "llms.txt");
 if (existsSync(llms)) copyFileSync(llms, join(OUT, "llms.txt"));
 
-// robots.txt
 writeFileSync(
   join(OUT, "robots.txt"),
   `User-agent: *\nAllow: /\nSitemap: https://rtc.echipadetocilari.ro/sitemap.xml\n`,
   "utf8",
 );
 
-// simple sitemap
 writeFileSync(
   join(OUT, "sitemap.xml"),
   `<?xml version="1.0" encoding="UTF-8"?>
@@ -198,14 +469,63 @@ writeFileSync(
   "utf8",
 );
 
-// vercel.json-style: ensure trailing slash pages exist
+// 4) Sanity checks
 const pages = ["programe", "despre-noi", "tabere", "rezerva-teren", "contact"];
 for (const p of pages) {
   const idx = join(OUT, p, "index.html");
-  if (!existsSync(idx)) {
-    console.warn("Missing page:", p);
+  if (!existsSync(idx)) console.warn("Missing page:", p);
+}
+
+const critical = [
+  "wp-content/themes/hello-elementor/assets/css/reset.css",
+  "wp-content/themes/hello-elementor/assets/css/theme.css",
+  "wp-content/plugins/elementor/assets/css/frontend.min.css",
+  "wp-content/uploads/elementor/css/post-19.css",
+  "wp-content/uploads/elementor/css/post-25.css",
+  "wp-content/uploads/elementor/css/post-40.css",
+  "wp-content/uploads/elementor/google-fonts/css/inter.css",
+  "wp-content/uploads/elementor/google-fonts/css/plusjakartasans.css",
+  "wp-includes/js/jquery/jquery.min.js",
+  "wp-content/uploads/2025/07/logo_club_tenis_rtc.webp",
+];
+let missing = 0;
+for (const rel of critical) {
+  if (!existsSync(join(OUT, rel))) {
+    console.error("MISSING critical asset:", rel);
+    missing++;
   }
 }
 
-console.log(`Prepared static site in out/ (html fixes: ${nHtml}, css: ${nCss})`);
-console.log("Files:", walk(OUT).length);
+// Verify homepage CSS links resolve
+const home = readFileSync(join(OUT, "index.html"), "utf8");
+const cssHrefs = [...home.matchAll(/href=['"]([^'"]+\.css[^'"]*)['"]/gi)].map(
+  (m) => m[1],
+);
+let brokenCss = 0;
+for (const href of cssHrefs) {
+  if (href.startsWith("http") || href.startsWith("//")) continue;
+  const path = href.split("?")[0].replace(/^\//, "");
+  if (!existsSync(join(OUT, path))) {
+    console.error("Broken CSS link:", href);
+    brokenCss++;
+  }
+}
+
+const leftoverVer = walk(OUT).filter((f) => basename(f).includes("_ver="));
+if (leftoverVer.length) {
+  console.warn(
+    "Leftover _ver= files:",
+    leftoverVer.slice(0, 10).map((f) => relative(OUT, f)),
+  );
+}
+
+console.log(
+  `Prepared out/ — renamed: ${nRenamed}, html: ${nHtml}, css: ${nCss}, js: ${nJs}, files: ${walk(OUT).length}`,
+);
+console.log(
+  `Checks — missing critical: ${missing}, broken css links: ${brokenCss}, leftover ver files: ${leftoverVer.length}`,
+);
+
+if (missing > 0 || brokenCss > 0) {
+  process.exitCode = 1;
+}

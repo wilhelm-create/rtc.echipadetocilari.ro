@@ -47,12 +47,15 @@ await scrape({
     { selector: "link[as='image']", attr: "href" },
     { selector: "script", attr: "src" },
     { selector: "video", attr: "src" },
+    { selector: "video", attr: "data-src" },
     { selector: "audio", attr: "src" },
     { selector: "embed", attr: "src" },
     { selector: "iframe", attr: "src" },
     { selector: "meta[property='og:image']", attr: "content" },
     { selector: "[style]", attr: "style" },
     { selector: "style" },
+    // Elementor background video lives in data-settings JSON, not video[src]
+    { selector: "[data-settings]", attr: "data-settings" },
   ],
   urlFilter: (url) => {
     try {

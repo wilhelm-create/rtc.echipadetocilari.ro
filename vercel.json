@@ -1,6 +1,7 @@
 {
   "buildCommand": "node scripts/prepare-static.mjs",
   "outputDirectory": "out",
+  "installCommand": "npm install --ignore-scripts",
   "framework": null,
   "cleanUrls": true,
   "trailingSlash": true,
