@@ -1,43 +1,43 @@
-# Clubul de Tenis RTC
+﻿# Clubul de Tenis RTC
 
-Site static modern (Next.js) pentru **Clubul de Tenis RTC** — migrat de pe WordPress (`rtc.echipadetocilari.ro`).
+Copie **identică** (static HTML/CSS/JS) a site-ului WordPress/Elementor `rtc.echipadetocilari.ro`.
 
-Dezvoltat de [Echipa de Tocilari](https://www.echipadetocilari.ro).
+## De ce static?
+
+Site-ul live a fost oglindit 1:1 (HTML Elementor + CSS + imagini + fonturi + JS).
+Nu e un redesign — e aceeași structură, aceleași stiluri, aceleași asset-uri.
 
 ## Stack
 
-- Next.js (App Router)
-- TypeScript
-- Tailwind CSS
+- HTML static (export din WordPress + Elementor)
 - Deploy: Vercel + GitHub
+- Agenție: [Echipa de Tocilari](https://www.echipadetocilari.ro)
 
-## Paginile
+## Pagini
 
-| Ruta | Conținut |
-|------|----------|
-| `/` | Homepage |
-| `/programe` | Programe de antrenament |
-| `/rezerva-teren` | Facilități + link Booksport |
-| `/despre-noi` | Echipa de antrenori |
-| `/tabere` | Tabere pentru copii |
-| `/contact` | Contact + formular |
+- `/` — Acasă
+- `/programe/`
+- `/rezerva-teren/`
+- `/despre-noi/`
+- `/tabere/`
+- `/contact/`
 
 ## Local
 
 ```bash
-npm install
-npm run dev
+npm run prepare:static   # generează folderul out/
+npm run dev:static       # serve out pe :3000
 ```
 
-Deschide [http://localhost:3000](http://localhost:3000).
+Re-mirror din WordPress (dacă live-ul se schimbă):
 
 ```bash
-npm run build
-npm start
+npm run mirror
+npm run prepare:static
 ```
 
-## Contact club
+## Build (Vercel)
 
-- **Email:** contact@tenisclubrtc.com
-- **Telefon:** +40 774 680 337
-- **Adresă:** Bulevardul Basarabia 73 - 79, București
+```bash
+npm run build   # = prepare-static → out/
+```
