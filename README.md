@@ -17,7 +17,7 @@ Vercel, conectat la acest repo. **Orice push pe `main` declanșează un deploy.*
 - Producție: https://rtc-tenis-copie.vercel.app
 - Panou: https://vercel.com/kazicianus-projects/rtc-tenis-copie
 
-Build-ul NU folosește Next.js, deși `next` și `react` apar în `package.json`.
+Build-ul nu folosește niciun framework.
 `npm run build` rulează `scripts/prepare-static.mjs`, care copiază
 `static-mirror/www.rtc.echipadetocilari.ro/` în `out/` și curăță path-urile
 asset-urilor (scoate `?ver=` / `_ver=`, face URL-urile relative). Vercel servește
@@ -28,8 +28,8 @@ asset-urilor (scoate `?ver=` / `_ver=`, face URL-urile relative). Vercel serveș
 În `static-mirror/www.rtc.echipadetocilari.ro/`. Acolo stau paginile, imaginile
 și clipurile.
 
-Folderul `src/` (App Router, componente React) e cod mort dintr-un redesign
-abandonat — nu ajunge niciodată în build. La fel și `public/images/`.
+HTML-ul e generat de Elementor, deci markup automat cu clase de forma
+`elementor-element-7d89ce8f`. Se poate edita, dar nu e cod scris de mână.
 
 > `npm run mirror` re-scrapează WordPress-ul live și **suprascrie** tot ce e în
 > `static-mirror/`. Cât timp faci modificări direct în cod, nu-l rula — îți pierzi
