@@ -98,29 +98,20 @@ function cleanAssetPath(path) {
   if (!path || path.startsWith("data:") || path.startsWith("blob:")) return path;
 
   let p = path;
-
-  // Strip query string & hash for local assets
-  const q = p.indexOf("?");
-  const h = p.indexOf("#");
   let query = "";
   let hash = "";
+
+  // Split off the fragment first, then the query. Both must be REMOVED from p —
+  // re-appending a fragment that is still part of p duplicates the whole path.
+  const h = p.indexOf("#");
+  if (h !== -1) {
+    hash = p.slice(h);
+    p = p.slice(0, h);
+  }
+  const q = p.indexOf("?");
   if (q !== -1) {
     query = p.slice(q);
     p = p.slice(0, q);
-  }
-  if (h !== -1 && (q === -1 || h < q)) {
-    // already handled if after ?
-  }
-  // Re-extract hash from original if present after path
-  const hashInOrig = path.indexOf("#");
-  if (hashInOrig !== -1) {
-    hash = path.slice(hashInOrig);
-    // if hash was after ?, strip from query
-    if (query.includes("#")) {
-      const hi = query.indexOf("#");
-      hash = query.slice(hi);
-      query = query.slice(0, hi);
-    }
   }
 
   // Decode scraper encoding
@@ -208,8 +199,11 @@ function fixHtml(content) {
   });
 
   // Inline style url(...)
-  c = c.replace(/url\((['"]?)([^'")]+)\1\)/gi, (full, q, u) => {
-    if (u.startsWith("data:")) return full;
+  // Elementor writes gallery backgrounds into HTML attributes with the quotes
+  // entity-encoded: url(&#039;…&#039;). Treat those as delimiters too, otherwise
+  // the # inside &#039; reads as a URL fragment.
+  c = c.replace(/url\((&#0?39;|&quot;|['"]?)([^)]*?)\1\)/gi, (full, q, u) => {
+    if (!u || u.startsWith("data:")) return full;
     const cleaned = cleanAssetPath(u.trim());
     return `url(${q}${cleaned}${q})`;
   });
@@ -386,8 +380,11 @@ function fixCss(content) {
   c = c.replaceAll("https://rtc.echipadetocilari.ro", "");
 
   // url(path?ver=…) or url(path_ver=…)
-  c = c.replace(/url\((['"]?)([^'")]+)\1\)/gi, (full, q, u) => {
-    if (u.startsWith("data:")) return full;
+  // Elementor writes gallery backgrounds into HTML attributes with the quotes
+  // entity-encoded: url(&#039;…&#039;). Treat those as delimiters too, otherwise
+  // the # inside &#039; reads as a URL fragment.
+  c = c.replace(/url\((&#0?39;|&quot;|['"]?)([^)]*?)\1\)/gi, (full, q, u) => {
+    if (!u || u.startsWith("data:")) return full;
     const cleaned = cleanAssetPath(u.trim());
     return `url(${q}${cleaned}${q})`;
   });
