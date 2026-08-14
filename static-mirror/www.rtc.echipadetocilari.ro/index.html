@@ -94,6 +94,16 @@ img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
 <link rel="icon" href="https://www.rtc.echipadetocilari.ro/wp-content/uploads/2025/07/logo_club_tenis_rtc-300x300.webp" sizes="192x192" />
 <link rel="apple-touch-icon" href="https://www.rtc.echipadetocilari.ro/wp-content/uploads/2025/07/logo_club_tenis_rtc-300x300.webp" />
 <meta name="msapplication-TileImage" content="https://www.rtc.echipadetocilari.ro/wp-content/uploads/2025/07/logo_club_tenis_rtc-300x300.webp" />
+<style id="rtc-hero-slideshow">
+.rtc-hero-slides{position:absolute;top:0;left:0;right:0;bottom:0;overflow:hidden;z-index:0;background-image:url("/wp-content/uploads/2026/08/hero-1.webp");background-size:cover;background-position:50% 50%;background-repeat:no-repeat}
+.rtc-hero-slides span{position:absolute;top:0;left:0;right:0;bottom:0;display:block;background-size:cover;background-repeat:no-repeat;opacity:0;will-change:opacity;animation:rtc-hero-fade 32s linear infinite}
+.rtc-hero-slides span:nth-child(1){background-image:url("/wp-content/uploads/2026/08/hero-2.webp");background-position:50% 20%;animation-delay:8s}
+.rtc-hero-slides span:nth-child(2){background-image:url("/wp-content/uploads/2026/08/hero-3.webp");background-position:50% 40%;animation-delay:16s}
+.rtc-hero-slides span:nth-child(3){background-image:url("/wp-content/uploads/2026/08/hero-4.webp");background-position:50% 50%;animation-delay:24s}
+@keyframes rtc-hero-fade{0%{opacity:0}3%{opacity:1}28%{opacity:1}31%{opacity:0}100%{opacity:0}}
+.elementor-element-6e9296b5>.elementor-container{position:relative;z-index:1}
+@media (prefers-reduced-motion:reduce){.rtc-hero-slides span{animation:none}}
+</style>
 </head>
 <body class="home wp-singular page-template-default page page-id-19 wp-custom-logo wp-embed-responsive wp-theme-hello-elementor hello-elementor-default elementor-default elementor-template-full-width elementor-kit-25 elementor-page elementor-page-19">
 
@@ -219,10 +229,8 @@ img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
 		</section>
 				</header>
 				<div data-elementor-type="wp-page" data-elementor-id="19" class="elementor elementor-19" data-elementor-post-type="page">
-						<section class="elementor-section elementor-top-section elementor-element elementor-element-6e9296b5 elementor-section-boxed elementor-section-height-default elementor-section-height-default" data-id="6e9296b5" data-element_type="section" data-settings="{&quot;background_background&quot;:&quot;video&quot;,&quot;background_video_link&quot;:&quot;https:\/\/www.rtc.echipadetocilari.ro\/wp-content\/uploads\/2025\/09\/Club-Tenis-RTC-.mp4&quot;,&quot;background_play_on_mobile&quot;:&quot;yes&quot;}">
-								<div class="elementor-background-video-container" aria-hidden="true">
-													<video class="elementor-background-video-hosted" autoplay muted playsinline loop></video>
-											</div>
+						<section class="elementor-section elementor-top-section elementor-element elementor-element-6e9296b5 elementor-section-boxed elementor-section-height-default elementor-section-height-default" data-id="6e9296b5" data-element_type="section" data-settings="{&quot;background_background&quot;:&quot;classic&quot;}">
+									<div class="rtc-hero-slides" aria-hidden="true"><span></span><span></span><span></span></div>
 									<div class="elementor-background-overlay"></div>
 							<div class="elementor-container elementor-column-gap-default">
 					<div class="elementor-column elementor-col-50 elementor-top-column elementor-element elementor-element-29a35e2e" data-id="29a35e2e" data-element_type="column">
