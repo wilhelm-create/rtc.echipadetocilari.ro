@@ -103,7 +103,10 @@ function cleanAssetPath(path) {
 
   // Split off the fragment first, then the query. Both must be REMOVED from p —
   // re-appending a fragment that is still part of p duplicates the whole path.
-  const h = p.indexOf("#");
+  // A "#" preceded by "&" is NOT a fragment: WP/Elementor encode query
+  // separators as the entity &#038;, and cutting there swallows the rest of the
+  // query string (that is how the map iframe lost &output=embed).
+  const h = p.search(/(?<!&)#/);
   if (h !== -1) {
     hash = p.slice(h);
     p = p.slice(0, h);
@@ -121,13 +124,25 @@ function cleanAssetPath(path) {
   p = p.replace(/_ver=[^/?#]+(?=\.[a-z0-9]+$)/gi, "");
 
   // Keep only non-ver query params if any (rare). Drop ver/v/version.
+  // Done by hand instead of URLSearchParams: that re-encodes the rest of the
+  // query (%20 → +) and does not treat the entity &#038; as a separator.
   if (query) {
-    const params = new URLSearchParams(query.slice(1));
-    params.delete("ver");
-    params.delete("v");
-    params.delete("version");
-    const rest = params.toString();
-    query = rest ? `?${rest}` : "";
+    const tokens = query.slice(1).split(/(&(?:#0?38;)?)/);
+    const parts = [];
+    for (let i = 0; i < tokens.length; i += 2) {
+      parts.push({ value: tokens[i], sep: tokens[i + 1] || "" });
+    }
+    const kept = parts.filter(
+      (part) => part.value && !/^(?:ver|v|version)=/i.test(part.value),
+    );
+    query = kept.length
+      ? "?" +
+        kept
+          .map(
+            (part, i) => part.value + (i < kept.length - 1 ? part.sep || "&" : ""),
+          )
+          .join("")
+      : "";
   }
 
   return p + query + hash;
@@ -166,7 +181,11 @@ function fixHtml(content) {
         val.startsWith("mailto:") ||
         val.startsWith("tel:") ||
         val.startsWith("javascript:") ||
-        val.startsWith("data:")
+        val.startsWith("data:") ||
+        // Our own domain is stripped above, so anything still absolute points
+        // at a third party (maps.google.com, tiktok, booksport) — leave it be.
+        /^https?:\/\//i.test(val) ||
+        val.startsWith("//")
       ) {
         return full;
       }
