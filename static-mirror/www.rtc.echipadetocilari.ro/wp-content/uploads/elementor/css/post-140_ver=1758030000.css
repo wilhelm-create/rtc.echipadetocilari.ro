@@ -1,0 +1,95 @@
+/* Pagina "Rezultate" (post 140).
+   Scrisa de mana, in stilul fisierelor generate de Elementor: aceleasi variabile
+   globale din post-25.css si aceeasi structura de sectiuni / coloane / widget-uri.
+   Diferenta: regulile sunt legate de clase citibile (.rtc-result-card) in loc de
+   id-uri hexa per element, ca sa poti adauga sau scoate un box fara sa atingi CSS-ul. */
+
+/* --- Hero: identic cu antetul paginilor Programe / Tabere --- */
+.elementor-140 .elementor-element.rtc-page-hero:not(.elementor-motion-effects-element-type-background),
+.elementor-140 .elementor-element.rtc-page-hero > .elementor-motion-effects-container > .elementor-motion-effects-layer{background-image:url("../../2025/07/young-woman-playing-tennis-2025-02-21-13-57-19-utc.jpg");background-position:center center;background-repeat:no-repeat;background-size:cover;}
+.elementor-140 .elementor-element.rtc-page-hero > .elementor-background-overlay{background-color:var( --e-global-color-primary );opacity:0.7;transition:background 0.3s, border-radius 0.3s, opacity 0.3s;}
+.elementor-140 .elementor-element.rtc-page-hero{transition:background 0.3s, border 0.3s, border-radius 0.3s, box-shadow 0.3s;margin-top:-130px;margin-bottom:0px;padding:226px 0px 96px 0px;}
+.elementor-140 .elementor-element.rtc-page-hero-col > .elementor-widget-wrap > .elementor-widget:not(.elementor-widget__width-auto):not(.elementor-widget__width-initial):not(:last-child):not(.elementor-absolute){margin-bottom:16px;}
+.elementor-140 .elementor-element.rtc-page-hero-title{text-align:center;}
+.elementor-140 .elementor-element.rtc-page-hero-title .elementor-heading-title{color:var( --e-global-color-400d3c0 );}
+.elementor-140 .elementor-element.rtc-breadcrumb .elementor-icon-list-items:not(.elementor-inline-items) .elementor-icon-list-item:not(:last-child){padding-block-end:calc(8px/2);}
+.elementor-140 .elementor-element.rtc-breadcrumb .elementor-icon-list-items:not(.elementor-inline-items) .elementor-icon-list-item:not(:first-child){margin-block-start:calc(8px/2);}
+.elementor-140 .elementor-element.rtc-breadcrumb .elementor-icon-list-items.elementor-inline-items .elementor-icon-list-item{margin-inline:calc(8px/2);}
+.elementor-140 .elementor-element.rtc-breadcrumb .elementor-icon-list-items.elementor-inline-items{margin-inline:calc(-8px/2);}
+.elementor-140 .elementor-element.rtc-breadcrumb .elementor-icon-list-items.elementor-inline-items .elementor-icon-list-item:after{inset-inline-end:calc(-8px/2);}
+.elementor-140 .elementor-element.rtc-breadcrumb .elementor-icon-list-icon i{color:var( --e-global-color-400d3c0 );transition:color 0.3s;}
+.elementor-140 .elementor-element.rtc-breadcrumb .elementor-icon-list-icon svg{fill:var( --e-global-color-400d3c0 );transition:fill 0.3s;}
+.elementor-140 .elementor-element.rtc-breadcrumb{--e-icon-list-icon-size:14px;--icon-vertical-offset:0px;}
+.elementor-140 .elementor-element.rtc-breadcrumb .elementor-icon-list-text{color:var( --e-global-color-a780d55 );transition:color 0.3s;}
+
+/* --- Sectiunea cu boxuri --- */
+.elementor-140 .elementor-element.rtc-results{padding:96px 0px 96px 0px;}
+.elementor-140 .elementor-element.rtc-results-col.elementor-column > .elementor-widget-wrap{justify-content:center;}
+.elementor-140 .elementor-element.rtc-results-col > .elementor-widget-wrap > .elementor-widget:not(.elementor-widget__width-auto):not(.elementor-widget__width-initial):not(:last-child):not(.elementor-absolute){margin-bottom:16px;}
+.elementor-140 .elementor-element.rtc-kicker .elementor-button{background-color:var( --e-global-color-b80ae01 );font-family:var( --e-global-typography-9b7ce0e-font-family ), Sans-serif;font-size:var( --e-global-typography-9b7ce0e-font-size );font-weight:var( --e-global-typography-9b7ce0e-font-weight );text-transform:var( --e-global-typography-9b7ce0e-text-transform );letter-spacing:var( --e-global-typography-9b7ce0e-letter-spacing );fill:var( --e-global-color-accent );color:var( --e-global-color-accent );border-style:solid;border-color:var( --e-global-color-91c5f24 );padding:8px 16px 8px 16px;}
+.elementor-140 .elementor-element.rtc-results-heading > .elementor-widget-container{margin:0px 0px 16px 0px;padding:0% 18% 0% 18%;}
+.elementor-140 .elementor-element.rtc-results-heading{text-align:center;}
+.elementor-140 .elementor-element.rtc-results-lead > .elementor-widget-container{margin:0px 0px 32px 0px;padding:0% 18% 0% 18%;}
+.elementor-140 .elementor-element.rtc-results-lead{text-align:center;}
+
+/* --- Randul de boxuri --- */
+.elementor-140 .elementor-element.rtc-results-row{margin-top:0px;margin-bottom:32px;}
+
+/* --- Boxul propriu-zis: rama, colturi rotunjite, hover portocaliu.
+       Fata de boxurile de pe homepage lipsesc sageata si link-ul, deci
+       continutul se aseaza de sus in jos (flex-start), nu space-between. --- */
+.elementor-140 .elementor-element.rtc-result-card:not(.elementor-motion-effects-element-type-background) > .elementor-widget-wrap,
+.elementor-140 .elementor-element.rtc-result-card > .elementor-widget-wrap > .elementor-motion-effects-container > .elementor-motion-effects-layer{background-color:var( --e-global-color-400d3c0 );}
+.elementor-bc-flex-widget .elementor-140 .elementor-element.rtc-result-card.elementor-column .elementor-widget-wrap{align-items:flex-start;}
+.elementor-140 .elementor-element.rtc-result-card.elementor-column.elementor-element[data-element_type="column"] > .elementor-widget-wrap.elementor-element-populated{align-content:flex-start;align-items:flex-start;}
+.elementor-140 .elementor-element.rtc-result-card.elementor-column > .elementor-widget-wrap{justify-content:flex-start;}
+.elementor-140 .elementor-element.rtc-result-card > .elementor-widget-wrap > .elementor-widget:not(.elementor-widget__width-auto):not(.elementor-widget__width-initial):not(:last-child):not(.elementor-absolute){margin-bottom:24px;}
+.elementor-140 .elementor-element.rtc-result-card > .elementor-element-populated{border-style:solid;border-width:1px 1px 1px 1px;border-color:var( --e-global-color-91c5f24 );transition:background 0.3s, border 0.4s, border-radius 0.4s, box-shadow 0.4s;padding:16px 16px 16px 16px;}
+.elementor-140 .elementor-element.rtc-result-card > .elementor-element-populated,
+.elementor-140 .elementor-element.rtc-result-card > .elementor-element-populated > .elementor-background-overlay,
+.elementor-140 .elementor-element.rtc-result-card > .elementor-background-slideshow{border-radius:16px 16px 16px 16px;}
+.elementor-140 .elementor-element.rtc-result-card:hover > .elementor-element-populated{border-style:solid;border-width:1px 1px 1px 1px;border-color:var( --e-global-color-accent );}
+.elementor-140 .elementor-element.rtc-result-card > .elementor-element-populated > .elementor-background-overlay{transition:background 0.3s, border-radius 0.4s, opacity 0.3s;}
+
+/* Spatiul dintre boxuri: 3% din latimea coloanei, egal intre toate trei */
+.elementor-140 .elementor-element.rtc-col-start > .elementor-element-populated{margin:0% 3% 0% 0%;--e-column-margin-right:3%;--e-column-margin-left:0%;}
+.elementor-140 .elementor-element.rtc-col-mid > .elementor-element-populated{margin:0% 1.5% 0% 1.5%;--e-column-margin-right:1.5%;--e-column-margin-left:1.5%;}
+.elementor-140 .elementor-element.rtc-col-end > .elementor-element-populated{margin:0% 0% 0% 3%;--e-column-margin-right:0%;--e-column-margin-left:3%;}
+
+/* Poza si textul din box */
+.elementor-140 .elementor-element.rtc-result-photo img{max-width:100%;height:350px;object-fit:cover;object-position:center center;}
+.elementor-140 .elementor-element.rtc-result-text{width:var( --container-widget-width, 100% );max-width:100%;--container-widget-width:100%;--container-widget-flex-grow:0;}
+.elementor-140 .elementor-element.rtc-result-text > .elementor-widget-container{margin:-16px 0px 0px 8px;}
+.elementor-140 .elementor-element.rtc-result-text .elementor-image-box-wrapper{text-align:left;}
+.elementor-140 .elementor-element.rtc-result-text .elementor-image-box-title{margin-bottom:8px;font-family:var( --e-global-typography-8106621-font-family ), Sans-serif;font-size:var( --e-global-typography-8106621-font-size );font-weight:var( --e-global-typography-8106621-font-weight );line-height:var( --e-global-typography-8106621-line-height );}
+
+@media(max-width:1024px){
+.elementor-140 .elementor-element.rtc-page-hero{padding:160px 0px 48px 0px;}
+.elementor-140 .elementor-element.rtc-results{padding:48px 16px 48px 16px;}
+.elementor-140 .elementor-element.rtc-kicker .elementor-button{font-size:var( --e-global-typography-9b7ce0e-font-size );letter-spacing:var( --e-global-typography-9b7ce0e-letter-spacing );}
+.elementor-140 .elementor-element.rtc-results-heading > .elementor-widget-container{margin:0px 0px 0px 0px;padding:0% 12% 0% 12%;}
+.elementor-140 .elementor-element.rtc-results-lead > .elementor-widget-container{margin:0px 0px 24px 0px;padding:0% 8% 0% 8%;}
+.elementor-140 .elementor-element.rtc-results-row{margin-top:0px;margin-bottom:20px;}
+.elementor-140 .elementor-element.rtc-result-photo img{height:290px;}
+.elementor-140 .elementor-element.rtc-result-text > .elementor-widget-container{margin:-16px 0px 16px 8px;}
+.elementor-140 .elementor-element.rtc-result-text .elementor-image-box-title{font-size:var( --e-global-typography-8106621-font-size );line-height:var( --e-global-typography-8106621-line-height );}
+}
+
+@media(max-width:767px){
+.elementor-140 .elementor-element.rtc-page-hero{margin-top:0px;margin-bottom:0px;padding:48px 0px 48px 0px;}
+.elementor-140 .elementor-element.rtc-results-heading > .elementor-widget-container{padding:0% 0% 0% 0%;}
+.elementor-140 .elementor-element.rtc-results-lead > .elementor-widget-container{padding:0% 0% 0% 0%;}
+.elementor-140 .elementor-element.rtc-results-row{margin-top:0px;margin-bottom:0px;}
+.elementor-140 .elementor-element.rtc-result-card.elementor-column > .elementor-widget-wrap{justify-content:flex-start;}
+.elementor-140 .elementor-element.rtc-col-start > .elementor-element-populated,
+.elementor-140 .elementor-element.rtc-col-mid > .elementor-element-populated,
+.elementor-140 .elementor-element.rtc-col-end > .elementor-element-populated{margin:0px 0px 16px 0px;--e-column-margin-right:0px;--e-column-margin-left:0px;}
+.elementor-140 .elementor-element.rtc-result-photo img{height:230px;}
+.elementor-140 .elementor-element.rtc-result-text .elementor-image-box-wrapper{text-align:left;}
+.elementor-140 .elementor-element.rtc-result-text .elementor-image-box-title{font-size:var( --e-global-typography-8106621-font-size );line-height:var( --e-global-typography-8106621-line-height );}
+}
+
+@media(min-width:1025px){
+.elementor-140 .elementor-element.rtc-page-hero:not(.elementor-motion-effects-element-type-background),
+.elementor-140 .elementor-element.rtc-page-hero > .elementor-motion-effects-container > .elementor-motion-effects-layer{background-attachment:scroll;}
+}

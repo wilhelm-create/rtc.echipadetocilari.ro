@@ -476,6 +476,7 @@ writeFileSync(
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://rtc.echipadetocilari.ro/</loc><priority>1.0</priority></url>
   <url><loc>https://rtc.echipadetocilari.ro/programe/</loc><priority>0.8</priority></url>
+  <url><loc>https://rtc.echipadetocilari.ro/rezultate/</loc><priority>0.8</priority></url>
   <url><loc>https://rtc.echipadetocilari.ro/rezerva-teren/</loc><priority>0.8</priority></url>
   <url><loc>https://rtc.echipadetocilari.ro/despre-noi/</loc><priority>0.8</priority></url>
   <url><loc>https://rtc.echipadetocilari.ro/tabere/</loc><priority>0.8</priority></url>
@@ -486,7 +487,7 @@ writeFileSync(
 );
 
 // 4) Sanity checks
-const pages = ["programe", "despre-noi", "tabere", "rezerva-teren", "contact"];
+const pages = ["programe", "rezultate", "despre-noi", "tabere", "rezerva-teren", "contact"];
 for (const p of pages) {
   const idx = join(OUT, p, "index.html");
   if (!existsSync(idx)) console.warn("Missing page:", p);
@@ -499,6 +500,7 @@ const critical = [
   "wp-content/uploads/elementor/css/post-19.css",
   "wp-content/uploads/elementor/css/post-25.css",
   "wp-content/uploads/elementor/css/post-40.css",
+  "wp-content/uploads/elementor/css/post-140.css",
   "wp-content/uploads/elementor/google-fonts/css/inter.css",
   "wp-content/uploads/elementor/google-fonts/css/plusjakartasans.css",
   "wp-includes/js/jquery/jquery.min.js",
