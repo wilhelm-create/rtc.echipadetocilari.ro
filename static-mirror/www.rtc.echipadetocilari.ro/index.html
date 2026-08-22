@@ -284,7 +284,7 @@ img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
 		</div>
 				<div class="elementor-column elementor-col-50 elementor-top-column elementor-element elementor-element-6073c3b" data-id="6073c3b" data-element_type="column">
 			<div class="elementor-widget-wrap elementor-element-populated">
-						<section class="elementor-section elementor-inner-section elementor-element elementor-element-784bdc46 elementor-section-content-middle elementor-section-boxed elementor-section-height-default elementor-section-height-default elementor-invisible" data-id="784bdc46" data-element_type="section" data-settings="{&quot;background_background&quot;:&quot;classic&quot;,&quot;animation&quot;:&quot;fadeInRight&quot;,&quot;animation_delay&quot;:&quot;400&quot;}">
+						<section class="elementor-section elementor-inner-section elementor-element elementor-element-784bdc46 elementor-section-content-middle elementor-section-boxed elementor-section-height-default elementor-section-height-default elementor-invisible rtc-counter-box" data-id="784bdc46" data-element_type="section" data-settings="{&quot;background_background&quot;:&quot;classic&quot;,&quot;animation&quot;:&quot;fadeInRight&quot;,&quot;animation_delay&quot;:&quot;400&quot;}">
 						<div class="elementor-container elementor-column-gap-default">
 					<div class="elementor-column elementor-col-50 elementor-inner-column elementor-element elementor-element-565ee7e1" data-id="565ee7e1" data-element_type="column">
 			<div class="elementor-widget-wrap elementor-element-populated">
@@ -305,13 +305,20 @@ img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
 				<div class="elementor-column elementor-col-50 elementor-inner-column elementor-element elementor-element-3ceb0eb7" data-id="3ceb0eb7" data-element_type="column">
 			<div class="elementor-widget-wrap elementor-element-populated">
 		<style id="rtc-counter-link-css">
-.rtc-counter-link{display:block;color:inherit;text-decoration:none;transition:opacity .3s}
-.rtc-counter-link:hover,.rtc-counter-link:focus{opacity:.72}
+.rtc-counter-box{position:relative}
+/* Elementor pune position:relative pe wrapperele interne; fara asta linkul intins
+   s-ar opri la marginea contorului in loc sa acopere tot boxul */
+.rtc-counter-box .elementor-container,.rtc-counter-box .elementor-column,.rtc-counter-box .elementor-widget-wrap,.rtc-counter-box .elementor-widget{position:static}
+.rtc-counter-box .elementor-counter{transition:opacity .3s}
+.rtc-counter-box:hover .elementor-counter{opacity:.72}
+.rtc-counter-link{display:block;color:inherit;text-decoration:none}
+.rtc-counter-link::after{content:"";position:absolute;inset:0;z-index:1}
+.rtc-counter-link:focus-visible::after{outline:2px solid #425FAB;outline-offset:6px;border-radius:16px}
 		</style>
 						<div class="elementor-element elementor-element-263de1d0 elementor-widget elementor-widget-counter" data-id="263de1d0" data-element_type="widget" data-widget_type="counter.default">
 				<div class="elementor-widget-container">
 							<div class="elementor-counter">
-			<a class="rtc-counter-link" href="/rezultate/"><div class="elementor-counter-title">Rezultate</div>			<div class="elementor-counter-number-wrapper">
+			<a class="rtc-counter-link" href="/rezultate/" aria-label="Vezi rezultatele sportivilor RTC"><div class="elementor-counter-title">Rezultate</div>			<div class="elementor-counter-number-wrapper">
 				<span class="elementor-counter-number-prefix"></span>
 				<span class="elementor-counter-number" data-duration="2000" data-to-value="28" data-from-value="0" data-delimiter=",">0</span>
 				<span class="elementor-counter-number-suffix">+</span>
@@ -364,7 +371,7 @@ img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
 		</div>
 				<div class="elementor-column elementor-col-50 elementor-top-column elementor-element elementor-element-6453913" data-id="6453913" data-element_type="column">
 			<div class="elementor-widget-wrap elementor-element-populated">
-						<section class="elementor-section elementor-inner-section elementor-element elementor-element-51b2a08 elementor-section-content-middle elementor-section-boxed elementor-section-height-default elementor-section-height-default elementor-invisible" data-id="51b2a08" data-element_type="section" data-settings="{&quot;background_background&quot;:&quot;classic&quot;,&quot;animation&quot;:&quot;fadeInRight&quot;,&quot;animation_delay&quot;:&quot;400&quot;}">
+						<section class="elementor-section elementor-inner-section elementor-element elementor-element-51b2a08 elementor-section-content-middle elementor-section-boxed elementor-section-height-default elementor-section-height-default elementor-invisible rtc-counter-box" data-id="51b2a08" data-element_type="section" data-settings="{&quot;background_background&quot;:&quot;classic&quot;,&quot;animation&quot;:&quot;fadeInRight&quot;,&quot;animation_delay&quot;:&quot;400&quot;}">
 						<div class="elementor-container elementor-column-gap-default">
 					<div class="elementor-column elementor-col-50 elementor-inner-column elementor-element elementor-element-6fd606b" data-id="6fd606b" data-element_type="column">
 			<div class="elementor-widget-wrap elementor-element-populated">
@@ -387,7 +394,7 @@ img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
 						<div class="elementor-element elementor-element-f386c74 elementor-widget elementor-widget-counter" data-id="f386c74" data-element_type="widget" data-widget_type="counter.default">
 				<div class="elementor-widget-container">
 							<div class="elementor-counter">
-			<a class="rtc-counter-link" href="/rezultate/"><div class="elementor-counter-title">Rezultate</div>			<div class="elementor-counter-number-wrapper">
+			<a class="rtc-counter-link" href="/rezultate/" aria-label="Vezi rezultatele sportivilor RTC"><div class="elementor-counter-title">Rezultate</div>			<div class="elementor-counter-number-wrapper">
 				<span class="elementor-counter-number-prefix"></span>
 				<span class="elementor-counter-number" data-duration="2000" data-to-value="28" data-from-value="0" data-delimiter=",">0</span>
 				<span class="elementor-counter-number-suffix">+</span>
