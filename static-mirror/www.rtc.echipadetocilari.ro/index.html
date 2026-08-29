@@ -95,7 +95,7 @@ img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
 <link rel="apple-touch-icon" href="https://www.rtc.echipadetocilari.ro/wp-content/uploads/2025/07/logo_club_tenis_rtc-300x300.webp" />
 <meta name="msapplication-TileImage" content="https://www.rtc.echipadetocilari.ro/wp-content/uploads/2025/07/logo_club_tenis_rtc-300x300.webp" />
 <style id="rtc-hero-slideshow">
-.rtc-hero-slides{position:absolute;top:0;left:0;right:0;bottom:0;overflow:hidden;z-index:0;background-image:url("/wp-content/uploads/2026/08/hero-1.webp");background-size:cover;background-position:50% 50%;background-repeat:no-repeat}
+.rtc-hero-slides{position:absolute;top:0;left:0;right:0;bottom:0;overflow:hidden;z-index:0;pointer-events:none;background-image:url("/wp-content/uploads/2026/08/hero-1.webp");background-size:cover;background-position:50% 50%;background-repeat:no-repeat}
 .rtc-hero-slides span{position:absolute;top:0;left:0;right:0;bottom:0;display:block;background-size:cover;background-repeat:no-repeat;opacity:0;will-change:opacity;animation:rtc-hero-fade 20s linear infinite}
 .rtc-hero-slides span:nth-child(1){background-image:url("/wp-content/uploads/2026/08/hero-1.webp");background-position:50% 50%;animation-delay:0s}
 .rtc-hero-slides span:nth-child(2){background-image:url("/wp-content/uploads/2026/08/hero-2.webp");background-position:50% 30%;animation-delay:5s}
@@ -109,7 +109,7 @@ img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
 .rtc-hero-promo-wrap{width:100%;margin:0 0 18px}
 .rtc-hero-promo{display:inline-flex;align-items:center;gap:9px;background:#c76647;color:#fff;border-radius:100px;padding:12px 22px;font-family:Inter,sans-serif;font-size:15px;font-weight:600;line-height:1.2;box-shadow:0 6px 18px rgba(0,0,0,.18)}
 .rtc-hero-promo::before{content:"";width:8px;height:8px;border-radius:50%;background:#fff;flex:0 0 auto}
-.rtc-hero-social{width:100%;display:flex;gap:12px;margin-top:22px}
+.rtc-hero-social{width:100%;display:flex;gap:12px;margin-top:22px;position:relative;z-index:2}
 .rtc-hero-social a{width:44px;height:44px;border-radius:50%;background:#fff;color:#425fab;display:inline-flex;align-items:center;justify-content:center;font-size:18px;line-height:1;text-decoration:none;box-shadow:0 6px 18px rgba(0,0,0,.18);transition:background .2s ease,color .2s ease,transform .2s ease}
 .rtc-hero-social a:hover,.rtc-hero-social a:focus-visible{background:#425fab;color:#fff;transform:translateY(-2px)}
 @media (max-width:767px){.rtc-hero-promo-wrap{text-align:center}.rtc-hero-social{justify-content:center}}
@@ -275,9 +275,9 @@ img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
 								</div>
 				</div>
 				<div class="rtc-hero-social">
-					<a href="https://www.facebook.com/people/MAGIA-Tenisului/61567592652921/" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><i class="fab fa-facebook" aria-hidden="true"></i></a>
-					<a href="https://www.instagram.com/rtctenisclub/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
-					<a href="https://www.tiktok.com/@magiatenisului" target="_blank" rel="noopener noreferrer" aria-label="TikTok"><i class="fab fa-tiktok" aria-hidden="true"></i></a>
+					<a href="/go/facebook/" aria-label="Facebook"><i class="fab fa-facebook" aria-hidden="true"></i></a>
+					<a href="/go/instagram/" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+					<a href="/go/tiktok/" aria-label="TikTok"><i class="fab fa-tiktok" aria-hidden="true"></i></a>
 				</div>
 
 					</div>
@@ -1254,17 +1254,17 @@ Creat cu pasiune de  <a href="echipadetocilari.ro">Echipa de Tocilari.</a></div>
 				<div class="elementor-widget-container">
 							<div class="elementor-social-icons-wrapper elementor-grid" role="list">
 							<span class="elementor-grid-item" role="listitem">
-					<a class="elementor-icon elementor-social-icon elementor-social-icon-facebook elementor-repeater-item-f540a39" href="https://www.facebook.com/people/MAGIA-Tenisului/61567592652921/" target="_blank">
+					<a class="elementor-icon elementor-social-icon elementor-social-icon-facebook elementor-repeater-item-f540a39" href="/go/facebook/">
 						<span class="elementor-screen-only">Facebook</span>
 						<i class="fab fa-facebook"></i>					</a>
 				</span>
 							<span class="elementor-grid-item" role="listitem">
-					<a class="elementor-icon elementor-social-icon elementor-social-icon-instagram elementor-repeater-item-10c80a8" href="https://www.instagram.com/rtctenisclub/" target="_blank">
+					<a class="elementor-icon elementor-social-icon elementor-social-icon-instagram elementor-repeater-item-10c80a8" href="/go/instagram/">
 						<span class="elementor-screen-only">Instagram</span>
 						<i class="fab fa-instagram"></i>					</a>
 				</span>
 							<span class="elementor-grid-item" role="listitem">
-					<a class="elementor-icon elementor-social-icon elementor-social-icon-tiktok elementor-repeater-item-50c56b7" href="https://www.tiktok.com/@magiatenisului?_t=ZN-8zk15mg9pPa&#038;_r=1" target="_blank">
+					<a class="elementor-icon elementor-social-icon elementor-social-icon-tiktok elementor-repeater-item-50c56b7" href="/go/tiktok/">
 						<span class="elementor-screen-only">Tiktok</span>
 						<i class="fab fa-tiktok"></i>					</a>
 				</span>

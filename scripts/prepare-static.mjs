@@ -148,7 +148,7 @@ function cleanAssetPath(path) {
   return p + query + hash;
 }
 
-function fixHtml(content) {
+function fixHtml(content, { skipEnhance = false } = {}) {
   let c = content;
 
   c = c.replaceAll("%3D", "=");
@@ -250,7 +250,7 @@ function fixHtml(content) {
   c = injectBackgroundVideoSrc(c);
 
   // Lightweight fallback for Elementor scroll animations + lazyload + video
-  if (c.includes("</body>") && !c.includes("rtc-static-enhance")) {
+  if (!skipEnhance && c.includes("</body>") && !c.includes("rtc-static-enhance")) {
     c = c.replace("</body>", `${ENHANCE_SCRIPT}\n</body>`);
   }
 
@@ -444,7 +444,7 @@ for (const file of walk(OUT)) {
   const raw = readFileSync(file, "utf8");
   let next = raw;
   if (ext === ".html" || ext === ".htm") {
-    next = fixHtml(raw);
+    next = fixHtml(raw, { skipEnhance: /[\\/]go[\\/]/.test(file) });
     nHtml++;
   } else if (ext === ".css") {
     next = fixCss(raw);
