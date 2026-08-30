@@ -36,7 +36,10 @@ codate ca `&#039;/wp-content/...&#039;` în galerii — o căutare simplă le ra
 - Nu adăuga Next.js/React înapoi fără o decizie explicită. Au existat, erau cod mort
   și au fost șterse deliberat.
 - După modificări, rulează `npm run prepare:static` și `npm run verify` înainte de push.
-- Push pe `main` declanșează deploy automat pe Vercel.
+- **Producție = remote `mine`**, nu `origin`. Vercel e legat de
+  `Kazicianu/rtc.echipadetocilari.ro`. Comanda: `git push mine HEAD:main`.
+  `origin` e `wilhelm-create/rtc.echipadetocilari.ro` și **nu** actualizează
+  site-ul live.
 
 ## De știut
 
