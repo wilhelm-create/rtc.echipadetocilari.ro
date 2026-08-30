@@ -118,7 +118,20 @@ img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
 .rtc-hero-social{width:100%;display:flex;gap:12px;margin-top:22px;position:relative;z-index:2}
 .rtc-hero-social a{width:44px;height:44px;border-radius:50%;background:#fff;color:#425fab;display:inline-flex;align-items:center;justify-content:center;font-size:18px;line-height:1;text-decoration:none;box-shadow:0 6px 18px rgba(0,0,0,.18);transition:background .2s ease,color .2s ease,transform .2s ease}
 .rtc-hero-social a:hover,.rtc-hero-social a:focus-visible{background:#425fab;color:#fff;transform:translateY(-2px)}
-@media (max-width:767px){.rtc-hero-promo-wrap{text-align:center}.rtc-hero-social{justify-content:center}}
+@media (max-width:767px){
+.elementor-element-6e9296b5{position:relative}
+.elementor-element-29a35e2e>.elementor-widget-wrap{display:flex;flex-direction:column}
+.rtc-hero-promo-wrap{order:1;height:0;margin:0;overflow:visible;text-align:center}
+.rtc-hero-promo{position:absolute;top:-135px;left:50%;transform:translateX(-50%);z-index:5;width:max-content;max-width:calc(100% - 32px);box-sizing:border-box}
+.rtc-hero-social{order:2;justify-content:center;margin-top:148px}
+.elementor-element-bd2c6cb{order:3;margin-top:12px}
+.elementor-19 .elementor-element.elementor-element-bd2c6cb .elementor-button{background-color:#425fab;color:#fff;fill:#fff;border-color:#425fab}
+.elementor-19 .elementor-element.elementor-element-bd2c6cb .elementor-button i{color:#fff}
+.elementor-19 .elementor-element.elementor-element-bd2c6cb .elementor-button:hover,
+.elementor-19 .elementor-element.elementor-element-bd2c6cb .elementor-button:focus{background-color:#fff;color:#425fab;fill:#425fab;border-color:#fff}
+.elementor-19 .elementor-element.elementor-element-bd2c6cb .elementor-button:hover i,
+.elementor-19 .elementor-element.elementor-element-bd2c6cb .elementor-button:focus i{color:#425fab}
+}
 </style>
 </head>
 <body class="home wp-singular page-template-default page page-id-19 wp-custom-logo wp-embed-responsive wp-theme-hello-elementor hello-elementor-default elementor-default elementor-template-full-width elementor-kit-25 elementor-page elementor-page-19">
