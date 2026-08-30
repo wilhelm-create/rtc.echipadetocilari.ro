@@ -102,6 +102,51 @@ img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
 .rtc-facility-video{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;display:block;border-radius:inherit;z-index:0}
 .elementor-113 .elementor-element-2b140bb8 > .elementor-widget-wrap > .elementor-element{position:relative;z-index:1}
 </style>
+<style id="rtc-facilities-carousel-css">
+@media screen and (max-width:767px){
+.elementor-113 .elementor-element-565009f0 > .elementor-widget-container{position:relative}
+.elementor-113 .elementor-element-565009f0 .rtc-facilities-carousel-stage{position:relative}
+.elementor-113 .elementor-element-565009f0 .elementor-gallery__container,
+.elementor-113 .elementor-element-565009f0 .e-gallery-container,
+.elementor-113 .elementor-element-565009f0 .e-gallery-grid{
+display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:stretch!important;
+overflow-x:auto!important;overflow-y:hidden!important;scroll-snap-type:x mandatory;scroll-behavior:smooth;
+-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;
+gap:12px!important;column-gap:12px!important;row-gap:0!important;grid-gap:12px!important;
+grid-template-columns:none!important;height:auto!important;min-height:0!important;
+padding:0!important;padding-bottom:0!important;margin:0!important;scrollbar-width:none
+}
+.elementor-113 .elementor-element-565009f0 .elementor-gallery__container::-webkit-scrollbar{display:none;width:0;height:0}
+.elementor-113 .elementor-element-565009f0 .e-gallery-item{
+position:relative!important;left:auto!important;top:auto!important;right:auto!important;bottom:auto!important;
+flex:0 0 88%!important;width:88%!important;max-width:88%!important;height:auto!important;min-height:0!important;
+margin:0!important;scroll-snap-align:start;transform:none!important;opacity:1!important
+}
+.elementor-113 .elementor-element-565009f0 .e-gallery-image{
+padding-bottom:66.666%!important;height:0!important;width:100%!important;transform:none!important;filter:none!important
+}
+.elementor-113 .elementor-element-565009f0 .rtc-facilities-carousel-btn{
+position:absolute;top:50%;transform:translateY(-50%);z-index:2;width:40px;height:40px;padding:0;border:0;border-radius:50%;
+background:rgba(18,32,46,.48);color:#fff;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:18px;line-height:1
+}
+.elementor-113 .elementor-element-565009f0 .rtc-facilities-carousel-btn:disabled{opacity:0;pointer-events:none}
+.elementor-113 .elementor-element-565009f0 .rtc-facilities-carousel-prev{left:8px}
+.elementor-113 .elementor-element-565009f0 .rtc-facilities-carousel-next{right:8px}
+.elementor-113 .elementor-element-565009f0 .rtc-facilities-carousel-dots{display:flex;justify-content:center;align-items:center;gap:8px;margin-top:14px}
+.elementor-113 .elementor-element-565009f0 .rtc-facilities-carousel-dot{
+width:8px;height:8px;padding:0;border:0;border-radius:999px;background:#425FAB55;cursor:pointer;transition:width .2s ease,background .2s ease
+}
+.elementor-113 .elementor-element-565009f0 .rtc-facilities-carousel-dot.is-active{width:22px;background:#425FAB}
+}
+@media screen and (min-width:768px){
+.elementor-113 .elementor-element-565009f0 .rtc-facilities-carousel-btn,
+.elementor-113 .elementor-element-565009f0 .rtc-facilities-carousel-dots{display:none!important}
+.elementor-113 .elementor-element-565009f0 .rtc-facilities-carousel-stage{display:contents}
+}
+@media (prefers-reduced-motion:reduce){
+.elementor-113 .elementor-element-565009f0 .elementor-gallery__container{scroll-behavior:auto}
+}
+</style>
 </head>
 <body class="wp-singular page-template-default page page-id-113 wp-custom-logo wp-embed-responsive wp-theme-hello-elementor hello-elementor-default elementor-default elementor-template-full-width elementor-kit-25 elementor-page elementor-page-113">
 
@@ -905,6 +950,127 @@ const a=JSON.parse(document.getElementById("wp-emoji-settings").textContent),o=(
   addEventListener('scroll',schedule,{passive:true});
   addEventListener('resize',schedule);
   sync();setTimeout(sync,700);setTimeout(sync,2500);
+})();
+</script>
+<script id="rtc-facilities-carousel-js">
+(function(){
+  var MQ=window.matchMedia('(max-width:767px)');
+  var widget=document.querySelector('.elementor-element-565009f0');
+  if(!widget)return;
+  var container=widget.querySelector('.elementor-gallery__container');
+  if(!container)return;
+  var wrap=widget.querySelector('.elementor-widget-container')||widget;
+  var stage=null,prevBtn=null,nextBtn=null,dotsWrap=null,dots=[];
+  var ticking=false;
+
+  function items(){
+    return Array.prototype.slice.call(container.querySelectorAll('.e-gallery-item'));
+  }
+  function loadImages(){
+    var imgs=container.querySelectorAll('.e-gallery-image');
+    for(var i=0;i<imgs.length;i++){
+      var img=imgs[i],url=img.getAttribute('data-thumbnail');
+      if(url){
+        img.style.backgroundImage='url("'+url.replace(/"/g,'')+'")';
+        img.classList.add('e-gallery-image-loaded');
+      }
+    }
+  }
+  function indexFromScroll(){
+    var list=items();
+    if(!list.length)return 0;
+    var left=container.scrollLeft,best=0,bestDist=Infinity;
+    for(var i=0;i<list.length;i++){
+      var dist=Math.abs(list[i].offsetLeft-left);
+      if(dist<bestDist){bestDist=dist;best=i;}
+    }
+    return best;
+  }
+  function goTo(i){
+    var list=items();
+    if(!list[i])return;
+    container.scrollTo({left:list[i].offsetLeft,behavior:'smooth'});
+  }
+  function sync(){
+    var list=items(),i=indexFromScroll();
+    for(var d=0;d<dots.length;d++){
+      dots[d].classList.toggle('is-active',d===i);
+      if(d===i)dots[d].setAttribute('aria-current','true');
+      else dots[d].removeAttribute('aria-current');
+    }
+    if(prevBtn)prevBtn.disabled=i===0;
+    if(nextBtn)nextBtn.disabled=i===list.length-1;
+  }
+  function onScroll(){
+    if(ticking)return;
+    ticking=true;
+    requestAnimationFrame(function(){ticking=false;sync();});
+  }
+  function ensureUi(){
+    if(stage)return;
+    widget.classList.add('rtc-gallery-carousel');
+    stage=document.createElement('div');
+    stage.className='rtc-facilities-carousel-stage';
+    wrap.insertBefore(stage,container);
+    stage.appendChild(container);
+
+    prevBtn=document.createElement('button');
+    prevBtn.type='button';
+    prevBtn.className='rtc-facilities-carousel-btn rtc-facilities-carousel-prev';
+    prevBtn.setAttribute('aria-label','Poza anterioară');
+    prevBtn.innerHTML='<i aria-hidden="true" class="eicon-chevron-left"></i>';
+    prevBtn.addEventListener('click',function(){goTo(Math.max(0,indexFromScroll()-1));});
+
+    nextBtn=document.createElement('button');
+    nextBtn.type='button';
+    nextBtn.className='rtc-facilities-carousel-btn rtc-facilities-carousel-next';
+    nextBtn.setAttribute('aria-label','Poza următoare');
+    nextBtn.innerHTML='<i aria-hidden="true" class="eicon-chevron-right"></i>';
+    nextBtn.addEventListener('click',function(){goTo(Math.min(items().length-1,indexFromScroll()+1));});
+    stage.appendChild(prevBtn);
+    stage.appendChild(nextBtn);
+
+    dotsWrap=document.createElement('div');
+    dotsWrap.className='rtc-facilities-carousel-dots';
+    dotsWrap.setAttribute('role','tablist');
+    dotsWrap.setAttribute('aria-label','Poze facilități');
+    var list=items();
+    for(var i=0;i<list.length;i++){
+      (function(idx){
+        var b=document.createElement('button');
+        b.type='button';
+        b.className='rtc-facilities-carousel-dot';
+        b.setAttribute('aria-label','Poza '+(idx+1)+' din '+list.length);
+        b.addEventListener('click',function(){goTo(idx);});
+        dotsWrap.appendChild(b);
+        dots.push(b);
+      })(i);
+    }
+    wrap.appendChild(dotsWrap);
+    container.addEventListener('scroll',onScroll,{passive:true});
+    container.setAttribute('tabindex','0');
+    container.setAttribute('role','region');
+    container.setAttribute('aria-roledescription','carousel');
+    container.setAttribute('aria-label','Facilități concepute pentru campioni');
+  }
+  function apply(){
+    if(MQ.matches){
+      ensureUi();
+      loadImages();
+      requestAnimationFrame(sync);
+    }else if(container){
+      container.scrollLeft=0;
+    }
+  }
+  function start(){
+    apply();
+    if(MQ.addEventListener)MQ.addEventListener('change',apply);
+    else MQ.addListener(apply);
+    addEventListener('resize',function(){if(MQ.matches)sync();});
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);
+  else start();
+  addEventListener('load',function(){apply();setTimeout(apply,400);});
 })();
 </script>
 </body>
